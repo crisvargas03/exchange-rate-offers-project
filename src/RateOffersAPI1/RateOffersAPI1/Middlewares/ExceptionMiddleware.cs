@@ -1,17 +1,25 @@
-﻿namespace RateOffersAPI1.Middlewares
+﻿using Serilog;
+
+namespace RateOffersAPI1.Middlewares
 {
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionMiddleware> _logger;
+        private readonly Serilog.ILogger _logger;
 
-        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+        public ExceptionMiddleware(RequestDelegate next)
         {
             _next = next;
-            _logger = logger;
+            _logger = new LoggerConfiguration()
+                .WriteTo.File(path: "Logs/error-log.txt",
+                rollingInterval: RollingInterval.Day,
+                retainedFileCountLimit: 7,
+                outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {Message}{NewLine}{Exception}")
+                .MinimumLevel.Error()
+                .CreateLogger();
         }
 
-        public async Task Invoke (HttpContext context)
+        public async Task Invoke(HttpContext context)
         {
             try
             {
@@ -19,10 +27,10 @@
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unhandled exception occurred: {Message}", ex.Message);
+                _logger.Error(ex, "An unhandled exception occurred: {Message}", ex.Message);
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 context.Response.ContentType = "application/json";
-                
+
                 await context.Response.WriteAsJsonAsync(new { error = "An unexpected error occurred." });
             }
         }

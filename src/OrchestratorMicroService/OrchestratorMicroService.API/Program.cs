@@ -1,17 +1,21 @@
+using OrchestratorMicroService.API.Middlewares;
 using OrchestratorMicroService.Application;
 using OrchestratorMicroService.Application.Options;
+using OrchestratorMicroService.Infrastructure;
+using OrchestratorMicroService.Infrastructure.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddApplication(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.Configure<OrchestratorOptions>(builder.Configuration.GetSection("OrchestratorSettings"));
+builder.Services.Configure<ApiProviderSettings>(builder.Configuration.GetSection("ApiProviders"));
 
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -25,6 +29,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthorization();
 

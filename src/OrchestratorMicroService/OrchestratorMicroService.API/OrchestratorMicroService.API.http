@@ -1,0 +1,6 @@
+@OrchestratorMicroService.API_HostAddress = http://localhost:5273
+
+GET {{OrchestratorMicroService.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

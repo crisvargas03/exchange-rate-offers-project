@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using OrchestratorMicroService.API.Models;
 using OrchestratorMicroService.Application.Interfaces;
+using OrchestratorMicroService.Domain.Models;
 
 namespace OrchestratorMicroService.API.Controllers
 {
@@ -9,14 +11,26 @@ namespace OrchestratorMicroService.API.Controllers
     public class ExchangeController : ControllerBase
     {
         private readonly IBestExchangeRateService _bestExchangeRateService;
-        public ExchangeController(IBestExchangeRateService bestExchangeRateService)
+        private readonly IValidator<CurrencyRequestDto> _currencyRequestValidator;
+        public ExchangeController(IBestExchangeRateService bestExchangeRateService, IValidator<CurrencyRequestDto> currencyRequestValidator)
         {
             _bestExchangeRateService = bestExchangeRateService;
+            _currencyRequestValidator = currencyRequestValidator;
         }
 
         [HttpPost]
         public async Task<IActionResult> GetBestRate([FromBody]CurrencyRequestDto request, CancellationToken cancellationToken)
         {
+
+            var validationResult = await _currencyRequestValidator.ValidateAsync(request, cancellationToken);
+            if (!validationResult.IsValid)
+            {
+                var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                var badresponse = ApiResponse<CurrencyRequest>.Fail(errors, System.Net.HttpStatusCode.BadRequest);
+                badresponse.Message = "Validation Failded";
+                return BadRequest(badresponse);
+            }
+
             var currencyRequest = new Domain.Models.CurrencyRequest
             {
                 SourceCurrency = request.SourceCurrency,

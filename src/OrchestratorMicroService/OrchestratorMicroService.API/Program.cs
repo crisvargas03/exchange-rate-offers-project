@@ -1,5 +1,8 @@
+using FluentValidation;
 using OrchestratorMicroService.API.Loggin;
 using OrchestratorMicroService.API.Middlewares;
+using OrchestratorMicroService.API.Models;
+using OrchestratorMicroService.API.Validator;
 using OrchestratorMicroService.Application;
 using OrchestratorMicroService.Application.Options;
 using OrchestratorMicroService.Infrastructure;
@@ -13,6 +16,8 @@ builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.RegisterSerilog(builder.Configuration);
+builder.Services.AddValidatorsFromAssemblyContaining<CurrencyRequestDtoValidator>();
+builder.Services.AddScoped<IValidator<CurrencyRequestDto>, CurrencyRequestDtoValidator>();
 
 builder.Services.Configure<OrchestratorOptions>(builder.Configuration.GetSection("OrchestratorSettings"));
 builder.Services.Configure<ApiProviderSettings>(builder.Configuration.GetSection("ApiProviders"));

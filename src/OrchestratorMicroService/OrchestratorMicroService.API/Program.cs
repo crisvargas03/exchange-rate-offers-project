@@ -1,6 +1,14 @@
+using OrchestratorMicroService.Application;
+using OrchestratorMicroService.Application.Options;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddApplication(builder.Configuration);
+
+builder.Services.Configure<OrchestratorOptions>(builder.Configuration.GetSection("OrchestratorSettings"));
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

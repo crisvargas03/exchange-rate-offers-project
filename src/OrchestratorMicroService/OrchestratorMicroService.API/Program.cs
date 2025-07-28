@@ -1,3 +1,4 @@
+using OrchestratorMicroService.API.Loggin;
 using OrchestratorMicroService.API.Middlewares;
 using OrchestratorMicroService.Application;
 using OrchestratorMicroService.Application.Options;
@@ -10,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.RegisterSerilog(builder.Configuration);
 
 builder.Services.Configure<OrchestratorOptions>(builder.Configuration.GetSection("OrchestratorSettings"));
 builder.Services.Configure<ApiProviderSettings>(builder.Configuration.GetSection("ApiProviders"));

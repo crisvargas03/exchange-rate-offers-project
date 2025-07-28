@@ -5,16 +5,12 @@ namespace OrchestratorMicroService.API.Middlewares
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly Serilog.ILogger _logger; // Change type to ILogger
-        public ExceptionMiddleware(RequestDelegate next)
+        private readonly ILogger<ExceptionMiddleware> _logger;
+        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
         {
             _next = next;
-            _logger = new LoggerConfiguration()
-               .MinimumLevel.Information()
-                .Enrich.FromLogContext()
-                .WriteTo.File("Logs/log.txt", rollingInterval: RollingInterval.Day)
-                .WriteTo.Console()
-                .CreateLogger();
+            _logger = logger;
+
         }
         public async Task InvokeAsync(HttpContext context)
         {
@@ -24,7 +20,7 @@ namespace OrchestratorMicroService.API.Middlewares
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "An exception occurred while processing the request.");
+                _logger.LogError(ex, "An exception occurred while processing the request.");
                 await HandleExceptionAsync(context, ex);
             }
         }

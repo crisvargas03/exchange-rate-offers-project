@@ -4,6 +4,6 @@ namespace OrchestratorMicroService.Application.Interfaces
 {
     public interface IBestExchangeRateService
     {
-        Task<CurrencyResult> GetBestOfferAsync(CurrencyRequest request, CancellationToken cancellationToken);
+        Task<ApiResponse<CurrencyResult>> GetBestOfferAsync(CurrencyRequest request, CancellationToken cancellationToken);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using OrchestratorMicroService.Application.Interfaces;
 using OrchestratorMicroService.Application.Options;
 using OrchestratorMicroService.Domain.Models;
@@ -9,14 +10,16 @@ namespace OrchestratorMicroService.Application.Services
     {
         private readonly IEnumerable<IExchangeRateProvider> _exchangeRateProviders;
         private readonly OrchestratorOptions _settings;
+        private readonly ILogger<BestExchangeRateService> _logger;
 
-        public BestExchangeRateService(IEnumerable<IExchangeRateProvider> exchangeRateProviders, IOptions<OrchestratorOptions> settings)
+        public BestExchangeRateService(IEnumerable<IExchangeRateProvider> exchangeRateProviders, IOptions<OrchestratorOptions> settings, ILogger<BestExchangeRateService> logger)
         {
             _exchangeRateProviders = exchangeRateProviders;
             _settings = settings.Value;
+            _logger = logger;
         }
 
-        public async Task<CurrencyResult> GetBestOfferAsync(CurrencyRequest request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<CurrencyResult>> GetBestOfferAsync(CurrencyRequest request, CancellationToken cancellationToken)
         {
 
             using var timeoutCts = new CancellationTokenSource(_settings.ProviderTimeoutMilliseconds);
@@ -26,44 +29,45 @@ namespace OrchestratorMicroService.Application.Services
 
             var results = await Task.WhenAll(tasks);
 
-            var badResponse = new CurrencyResult
-            {
-                Provider = "",
-                IsSuccessful = false,
-                Amount = 0
-            };
-
             var validResults = results
                 .Where(r => r is not null)
                 .OrderByDescending(r => r!.Amount)
                 .ToList();
 
-            if (!validResults.Any() || validResults.Count == 0)
+            if (validResults.Count == 0)
             {
-                //_logger.LogWarning("No valid responses received from any provider.");
-                return badResponse;
+                _logger.LogWarning("No valid responses received from any provider.");
+                return ApiResponse<CurrencyResult>.Fail("No results for Any Providers");
             }
 
-            var best = validResults.First();
+            var best = validResults.FirstOrDefault();
 
-            return new CurrencyResult
+            var bestOffer = new CurrencyResult
             {
                 Provider = best.Provider,
                 Amount = best.Amount,
                 Rate = best.Rate,
                 IsSuccessful = true
             };
+
+            return ApiResponse<CurrencyResult>.Success(bestOffer);
         }
 
         private async Task<CurrencyResult?> CallProvider(IExchangeRateProvider provider, CurrencyRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                return await provider.GetExchangeRateAsync(request, cancellationToken);
+                var providerResult = await provider.GetExchangeRateAsync(request, cancellationToken);
+                if (!providerResult.IsSuccessful)
+                {
+                    _logger.LogWarning("Provider {Provider} returned an unsuccessful result for request: {Request}", providerResult.Provider, request);
+                    return null;
+                }
+                return providerResult;
             }
             catch (Exception ex)
             {
-                // _logger.LogWarning(ex, "Provider {Provider} failed.", provider.GetType().Name);
+                _logger.LogWarning(ex, "Provider {Provider} failed.", provider.GetType().Name);
                 return null;
             }
         }

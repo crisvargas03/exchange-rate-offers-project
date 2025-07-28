@@ -38,7 +38,7 @@ namespace OrchestratorMicroService.Application.Services
                 .OrderByDescending(r => r!.Amount)
                 .ToList();
 
-            if (!validResults.Any())
+            if (!validResults.Any() || validResults.Count == 0)
             {
                 //_logger.LogWarning("No valid responses received from any provider.");
                 return badResponse;

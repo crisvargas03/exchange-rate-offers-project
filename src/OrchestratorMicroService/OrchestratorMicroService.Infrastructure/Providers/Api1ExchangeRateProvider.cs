@@ -15,31 +15,45 @@ namespace OrchestratorMicroService.Infrastructure.Providers
 
         public async Task<CurrencyResult> GetExchangeRateAsync(CurrencyRequest request, CancellationToken cancellationToken)
         {
-            var urlWithParams = $"/rates/exchanges?fromCurrency={request.SourceCurrency}&toCurrency={request.TargetCurrency}&value={request.Amount}";
-            Console.WriteLine(_httpClient.BaseAddress);
-            var response = await _httpClient.GetAsync(urlWithParams, cancellationToken);
-
-            var badResponse = new CurrencyResult
+            try
             {
-                Provider = "API1",
-                IsSuccessful = false,
-                Amount = 0
-            };
+                var urlWithParams = $"/api/rates/exchanges?fromCurrency={request.SourceCurrency}&toCurrency={request.TargetCurrency}";
+                Console.WriteLine(_httpClient.BaseAddress);
+                var response = await _httpClient.GetAsync(urlWithParams, cancellationToken);
 
-            if (!response.IsSuccessStatusCode)
-                return badResponse;
+                if (!response.IsSuccessStatusCode)
+                    return new CurrencyResult
+                    {
+                        Provider = "API1",
+                        IsSuccessful = false,
+                        Amount = 0,
+                        Rate = 0
+                    };
 
-            var content = await response.Content.ReadFromJsonAsync<Api1Response>(cancellationToken: cancellationToken);
-            if (content is null)
-                return badResponse;
+                var content = await response.Content.ReadFromJsonAsync<Api1Response>(cancellationToken: cancellationToken);
+                if (content is null)
+                    return new CurrencyResult
+                    {
+                        Provider = "API1",
+                        IsSuccessful = false,
+                        Amount = 0,
+                        Rate = 0
+                    };
 
-            return new CurrencyResult
+                var result = new CurrencyResult
+                {
+                    Provider = "API1",
+                    Rate = content.Rate,
+                    Amount = content.Rate * request.Amount,
+                    IsSuccessful = true
+                };
+                return result;
+            }
+            catch (TaskCanceledException ex)
             {
-                Provider = "API1",
-                Rate = content.Rate,
-                Amount = content.Rate * request.Amount,
-                IsSuccessful = true
-            };
+                // log timeout exception
+                return null;
+            }
         }
 
         private class Api1Response

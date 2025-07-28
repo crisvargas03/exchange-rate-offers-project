@@ -10,7 +10,7 @@ namespace OrchestratorMicroService.Infrastructure
     {
         private static void AddServices(this IServiceCollection services)
         {
-            services.AddScoped<IExchangeRateProvider, Api1ExchangeRateProvider>();
+            // services.AddScoped<IExchangeRateProvider, Api1ExchangeRateProvider>();
         }
         public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {

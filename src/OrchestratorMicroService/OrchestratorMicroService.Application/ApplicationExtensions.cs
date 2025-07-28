@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OrchestratorMicroService.Application.Interfaces;
-using OrchestratorMicroService.Application.Options;
 using OrchestratorMicroService.Application.Services;
 
 namespace OrchestratorMicroService.Application

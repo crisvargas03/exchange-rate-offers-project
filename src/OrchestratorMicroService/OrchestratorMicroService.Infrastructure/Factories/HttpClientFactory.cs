@@ -13,7 +13,9 @@ namespace OrchestratorMicroService.Infrastructure.Factories
             services.AddHttpClient<T>(client =>
             {
                 client.BaseAddress = new Uri(baseUrl);
+                client.Timeout = TimeSpan.FromMilliseconds(5000);
             });
+            services.AddScoped<IExchangeRateProvider>(sp => sp.GetRequiredService<T>());
         }
 
         public static void AddHttpClientsByFactory(this IServiceCollection services, IConfiguration configuration)

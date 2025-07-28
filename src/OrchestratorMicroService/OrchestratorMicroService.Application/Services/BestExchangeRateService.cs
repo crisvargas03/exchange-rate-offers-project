@@ -22,10 +22,12 @@ namespace OrchestratorMicroService.Application.Services
         public async Task<ApiResponse<CurrencyResult>> GetBestOfferAsync(CurrencyRequest request, CancellationToken cancellationToken)
         {
 
-            using var timeoutCts = new CancellationTokenSource(_settings.ProviderTimeoutMilliseconds);
-            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
+            var timeout = _settings.ProviderTimeoutMilliseconds;
+            var minToSuccessResponse = _settings.MinimumSuccessfulResponses;
 
-            var tasks = _exchangeRateProviders.Select(provider => CallProvider(provider, request, linkedCts.Token)).ToList();
+            var tasks = _exchangeRateProviders
+                .Select(provider => CallProvider(provider, request, cancellationToken))
+                .ToList();
 
             var results = await Task.WhenAll(tasks);
 
@@ -34,36 +36,47 @@ namespace OrchestratorMicroService.Application.Services
                 .OrderByDescending(r => r!.Amount)
                 .ToList();
 
-            if (validResults.Count == 0)
+            if (validResults.Count < minToSuccessResponse)
             {
-                _logger.LogWarning("No valid responses received from any provider.");
-                return ApiResponse<CurrencyResult>.NotFound("No results for Any Providers");
+                _logger.LogWarning("Only {Count} successful responses received. Minimum required is {Required}.", validResults.Count, minToSuccessResponse);
+                return ApiResponse<CurrencyResult>.NotFound("Not enough valid provider responses.");
             }
 
             var best = validResults.FirstOrDefault();
-
             var bestOffer = CurrencyResult.Success(best!.Provider, best.Amount, best.Rate);
-
             return ApiResponse<CurrencyResult>.Success(bestOffer);
         }
 
-        private async Task<CurrencyResult?> CallProvider(IExchangeRateProvider provider, CurrencyRequest request, CancellationToken cancellationToken)
+        private async Task<CurrencyResult?> CallProvider(
+            IExchangeRateProvider provider, 
+            CurrencyRequest request,
+            CancellationToken globalToken)
         {
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(globalToken);
+            cts.CancelAfter(_settings.ProviderTimeoutMilliseconds);
+
             try
             {
-                var providerResult = await provider.GetExchangeRateAsync(request, cancellationToken);
-                if (!providerResult.IsSuccessful)
+                var result = await provider.GetExchangeRateAsync(request, cts.Token);
+
+                if (!result.IsSuccessful)
                 {
-                    _logger.LogWarning("Provider {Provider} returned an unsuccessful result for request: {Request}", providerResult.Provider, request);
+                    _logger.LogWarning("Provider {Provider} returned unsuccessful result.", result.Provider);
                     return null;
                 }
-                return providerResult;
+
+                return result;
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.LogWarning("Provider {Provider} timed out.", provider.GetType().Name);
+                return null;
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Provider {Provider} failed.", provider.GetType().Name);
+                _logger.LogError(ex, "Error calling provider {Provider}.", provider.GetType().Name);
                 return null;
             }
         }
-    } 
+    }
 }

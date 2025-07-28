@@ -12,8 +12,6 @@ namespace RateOffersAPI2.Helpers
 
             using var reader = new StreamReader(request.Body);
             var body = await reader.ReadToEndAsync();
-            Console.WriteLine($"[XML BODY]:\n{body}");
-
             using var stringReader = new StringReader(body);
             var result = (T?)serializer.Deserialize(stringReader);
 

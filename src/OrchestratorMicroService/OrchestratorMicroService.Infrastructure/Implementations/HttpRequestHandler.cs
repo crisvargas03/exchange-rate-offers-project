@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using OrchestratorMicroService.Infrastructure.Interfaces;
 using System.Net.Http.Json;
+using System.Text;
+using System.Xml.Serialization;
 
 namespace OrchestratorMicroService.Infrastructure.Implementations
 {
@@ -52,8 +54,7 @@ namespace OrchestratorMicroService.Infrastructure.Implementations
         {
             try
             {
-                Console.WriteLine(_httpClient.BaseAddress);
-                var response = await _httpClient.PostAsJsonAsync(relativeUrl, data);
+                var response = await _httpClient.PostAsJsonAsync(relativeUrl, data, cancellationToken);
                 if (!response.IsSuccessStatusCode)
                 {
                     _logger.LogWarning("POST failed [{StatusCode}] for {Url}", response.StatusCode, relativeUrl);
@@ -67,6 +68,45 @@ namespace OrchestratorMicroService.Infrastructure.Implementations
                 _logger.LogError(ex, "POST error for {Url}", relativeUrl);
                 return default;
             }
+        }
+
+        public async Task<TResponse?> PostXmlAsync<TRequest, TResponse>(string relativeUrl, TRequest data, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var xml = SerializeToXml(data);
+
+                using var content = new StringContent(xml, Encoding.UTF8, "application/xml");
+                var response = await _httpClient.PostAsync(relativeUrl, content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("POST XML failed [{StatusCode}] for {Url}", response.StatusCode, relativeUrl);
+                    return default;
+                }
+
+                var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+                return DeserializeFromXmlStream<TResponse>(stream);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "POST XML error for {Url}", relativeUrl);
+                return default;
+            }
+        }
+
+        private static string SerializeToXml<T>(T obj)
+        {
+            var serializer = new XmlSerializer(typeof(T));
+            using var stringWriter = new StringWriter();
+            serializer.Serialize(stringWriter, obj);
+            return stringWriter.ToString();
+        }
+
+        private static T? DeserializeFromXmlStream<T>(Stream stream)
+        {
+            var serializer = new XmlSerializer(typeof(T));
+            return (T?)serializer.Deserialize(stream);
         }
     }
 }

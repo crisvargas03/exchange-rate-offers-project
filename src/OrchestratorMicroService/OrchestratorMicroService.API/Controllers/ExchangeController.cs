@@ -31,7 +31,7 @@ namespace OrchestratorMicroService.API.Controllers
                 return BadRequest(badresponse);
             }
 
-            var currencyRequest = new Domain.Models.CurrencyRequest
+            var currencyRequest = new CurrencyRequest
             {
                 SourceCurrency = request.SourceCurrency,
                 TargetCurrency = request.TargetCurrency,
@@ -39,8 +39,11 @@ namespace OrchestratorMicroService.API.Controllers
             };
 
             var result = await _bestExchangeRateService.GetBestOfferAsync(currencyRequest, cancellationToken);
-            if (result is null) 
-                return NotFound("No exchange rate found for the provided currencies.");
+            if (result.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                var notFoundResponse = ApiResponse<CurrencyRequest>.NotFound("No exchange rate found for the provided currencies.");
+                return NotFound(notFoundResponse);
+            }
 
             return Ok(result);
         }

@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using OrchestratorMicroService.Application.Interfaces;
 using OrchestratorMicroService.Infrastructure.Configuration;
+using OrchestratorMicroService.Infrastructure.Implementations;
+using OrchestratorMicroService.Infrastructure.Interfaces;
 using OrchestratorMicroService.Infrastructure.Providers;
 
 namespace OrchestratorMicroService.Infrastructure.Factories
@@ -15,7 +17,9 @@ namespace OrchestratorMicroService.Infrastructure.Factories
                 client.BaseAddress = new Uri(baseUrl);
                 client.Timeout = TimeSpan.FromMilliseconds(5000);
             });
-            services.AddScoped<IExchangeRateProvider>(sp => sp.GetRequiredService<T>());
+
+            services.AddScoped(typeof(IHttpRequestHandler<T>), typeof(HttpRequestHandler<T>));
+            services.AddScoped<IExchangeRateProvider, T>();
         }
 
         public static void AddHttpClientsByFactory(this IServiceCollection services, IConfiguration configuration)

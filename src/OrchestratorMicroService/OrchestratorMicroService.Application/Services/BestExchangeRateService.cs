@@ -37,18 +37,12 @@ namespace OrchestratorMicroService.Application.Services
             if (validResults.Count == 0)
             {
                 _logger.LogWarning("No valid responses received from any provider.");
-                return ApiResponse<CurrencyResult>.Fail("No results for Any Providers");
+                return ApiResponse<CurrencyResult>.NotFound("No results for Any Providers");
             }
 
             var best = validResults.FirstOrDefault();
 
-            var bestOffer = new CurrencyResult
-            {
-                Provider = best.Provider,
-                Amount = best.Amount,
-                Rate = best.Rate,
-                IsSuccessful = true
-            };
+            var bestOffer = CurrencyResult.Success(best!.Provider, best.Amount, best.Rate);
 
             return ApiResponse<CurrencyResult>.Success(bestOffer);
         }

@@ -46,7 +46,7 @@ namespace OrchestratorMicroService.Domain.Models
             return new ApiResponse<T>
             {
                 StatusCode = HttpStatusCode.NotFound,
-                IsSuccess = true,
+                IsSuccess = false,
                 Message = message,
                 Data = default
             };

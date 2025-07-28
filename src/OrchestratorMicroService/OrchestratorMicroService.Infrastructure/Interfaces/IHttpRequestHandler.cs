@@ -3,5 +3,6 @@
     public interface IHttpRequestHandler<TClient>
     {
         Task<T?> GetAsync<T>(string relativeUrl, CancellationToken cancellationToken = default);
+        Task<TResponse?> PostAsync<TRequest, TResponse>(string relativeUrl, TRequest data, CancellationToken cancellationToken = default);
     }
 }

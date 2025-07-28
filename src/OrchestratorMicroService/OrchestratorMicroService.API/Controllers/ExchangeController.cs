@@ -26,7 +26,7 @@ namespace OrchestratorMicroService.API.Controllers
             if (!validationResult.IsValid)
             {
                 var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                var badresponse = ApiResponse<CurrencyRequest>.Fail(errors, System.Net.HttpStatusCode.BadRequest);
+                var badresponse = ApiResponse<CurrencyResponseDto>.Fail(errors, System.Net.HttpStatusCode.BadRequest);
                 badresponse.Message = "Validation Failded";
                 return BadRequest(badresponse);
             }
@@ -41,11 +41,18 @@ namespace OrchestratorMicroService.API.Controllers
             var result = await _bestExchangeRateService.GetBestOfferAsync(currencyRequest, cancellationToken);
             if (result.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                var notFoundResponse = ApiResponse<CurrencyRequest>.NotFound("No exchange rate found for the provided currencies.");
+                var notFoundResponse = ApiResponse<CurrencyResponseDto>.NotFound("No exchange rate found for the provided currencies.");
                 return NotFound(notFoundResponse);
             }
 
-            return Ok(result);
+            var currencyResponse = new CurrencyResponseDto
+            {
+                Provider = result.Data!.Provider,
+                Rate = result.Data.Rate,
+                Amount = result.Data.Amount
+            };
+            var successResponse = ApiResponse<CurrencyResponseDto>.Success(currencyResponse);
+            return Ok(successResponse);
         }
     }
 }

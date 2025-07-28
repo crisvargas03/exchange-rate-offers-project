@@ -47,5 +47,26 @@ namespace OrchestratorMicroService.Infrastructure.Implementations
                 return default;
             }
         }
+
+        public async Task<TResponse?> PostAsync<TRequest, TResponse>(string relativeUrl, TRequest data, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                Console.WriteLine(_httpClient.BaseAddress);
+                var response = await _httpClient.PostAsJsonAsync(relativeUrl, data);
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("POST failed [{StatusCode}] for {Url}", response.StatusCode, relativeUrl);
+                    return default;
+                }
+
+                return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "POST error for {Url}", relativeUrl);
+                return default;
+            }
+        }
     }
 }

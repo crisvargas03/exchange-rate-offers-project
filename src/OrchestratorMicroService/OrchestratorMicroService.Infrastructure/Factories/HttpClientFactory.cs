@@ -28,7 +28,7 @@ namespace OrchestratorMicroService.Infrastructure.Factories
             RegisterClient<Api1ExchangeRateProvider>(services, settings.Api1BaseUrl);
 
             // RegisterClient<Api2ExchangeRateProvider>(services, settings.Api2BaseUrl);
-            // RegisterClient<Api3ExchangeRateProvider>(services, settings.Api3BaseUrl);
+            RegisterClient<Api3ExchangeRateProvider>(services, settings.Api3BaseUrl);
             RegisterClient<ApiExternalExchangeRateProvider>(services, settings.ApiExternalBaseUrl);
         }
     }

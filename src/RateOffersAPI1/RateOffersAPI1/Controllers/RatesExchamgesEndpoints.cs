@@ -7,7 +7,7 @@ namespace RateOffersAPI1.Controllers
     {
         public static void MapRatesExchamgesEndpoints(this IEndpointRouteBuilder app)
         {
-            app.MapGet("api/rates/exchanges", (string fromCurrency, string toCurrency, [FromServices] IRateProvider rateProvider) =>
+            app.MapGet("api/rates/exchanges", async (string fromCurrency, string toCurrency, [FromServices] IRateProvider rateProvider) =>
             {
                 if (string.IsNullOrWhiteSpace(fromCurrency)
                     || string.IsNullOrWhiteSpace(toCurrency))
@@ -16,6 +16,7 @@ namespace RateOffersAPI1.Controllers
                 }
                 try
                 {
+                    await Task.Delay(3000);
                     var rate = rateProvider.GetRate(fromCurrency, toCurrency);
                     return Results.Ok(new { rate });
                 }

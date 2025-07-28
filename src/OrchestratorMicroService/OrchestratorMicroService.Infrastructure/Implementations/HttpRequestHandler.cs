@@ -38,7 +38,7 @@ namespace OrchestratorMicroService.Infrastructure.Implementations
             }
             catch (TaskCanceledException ex)
             {
-                _logger.LogWarning(ex, "Timeout or cancellation for {Url}", relativeUrl);
+                _logger.LogWarning(ex.Message, "Timeout or cancellation for {Url}", relativeUrl);
                 return default;
             }
             catch (Exception ex)

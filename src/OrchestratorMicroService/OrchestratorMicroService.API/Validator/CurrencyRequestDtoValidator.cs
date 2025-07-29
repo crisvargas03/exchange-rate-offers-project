@@ -16,6 +16,16 @@ namespace OrchestratorMicroService.API.Validator
             RuleFor(x => x.Amount)
                 .NotEmpty().WithMessage("Amount is required.")
                 .GreaterThan(0).WithMessage("Amount must be greater than zero.");
+
+            RuleFor(x => x.SourceCurrency)
+                .Length(3).WithMessage("Source currency must be exactly 3 characters long.");
+
+            RuleFor(x => x.TargetCurrency)
+                .Length(3).WithMessage("Target currency must be exactly 3 characters long.");
+
+            RuleFor(x => x)
+                .Must(x => x.SourceCurrency != x.TargetCurrency)
+                .WithMessage("Source and target currencies must be different.");
         }
     }
 }

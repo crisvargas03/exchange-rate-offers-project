@@ -30,7 +30,8 @@ namespace OrchestratorMicroService.Infrastructure.Providers
             {
                 return CurrencyResult.Fail(ProviderName);
             }
-            return CurrencyResult.Success(ProviderName, request.Amount, response.Result.Rate);
+            var calculatedAmount = decimal.Round(request.Amount * response.Result.Rate, 3);
+            return CurrencyResult.Success(ProviderName, calculatedAmount, response.Result.Rate);
         }
         private class ApiExternalResponse
         {

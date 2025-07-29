@@ -32,8 +32,8 @@ namespace OrchestratorMicroService.Application.Services
             var results = await Task.WhenAll(tasks);
 
             var validResults = results
-                .Where(r => r is not null)
-                .OrderByDescending(r => r!.Amount)
+                .Where(r => r is not null && r.IsSuccessful)
+                .OrderByDescending(r => r.Amount)
                 .ToList();
 
             if (validResults.Count < minToSuccessResponse)
@@ -54,15 +54,20 @@ namespace OrchestratorMicroService.Application.Services
         {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(globalToken);
             cts.CancelAfter(_settings.ProviderTimeoutMilliseconds);
-
+            var providerName = provider.GetType().Name;
             try
             {
                 var result = await provider.GetExchangeRateAsync(request, cts.Token);
+                if (result is null)
+                {
+                    _logger.LogWarning("Provider {Provider} returned null result.", provider.GetType().Name);
+                    return CurrencyResult.Fail(providerName);
+                }
 
                 if (!result.IsSuccessful)
                 {
                     _logger.LogWarning("Provider {Provider} returned unsuccessful result.", result.Provider);
-                    return null;
+                    return CurrencyResult.Fail(providerName);
                 }
 
                 return result;
@@ -70,12 +75,12 @@ namespace OrchestratorMicroService.Application.Services
             catch (OperationCanceledException)
             {
                 _logger.LogWarning("Provider {Provider} timed out.", provider.GetType().Name);
-                return null;
+                return CurrencyResult.Fail(providerName);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error calling provider {Provider}.", provider.GetType().Name);
-                return null;
+                return CurrencyResult.Fail(providerName);
             }
         }
     }

@@ -45,7 +45,7 @@ namespace OrchestratorMicroService.Infrastructure.Implementations
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error for {Url}", relativeUrl);
+                _logger.LogError(ex.Message, "Unexpected error for {Url}", relativeUrl);
                 return default;
             }
         }
@@ -65,7 +65,7 @@ namespace OrchestratorMicroService.Infrastructure.Implementations
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "POST error for {Url}", relativeUrl);
+                _logger.LogError(ex.Message, "POST error for {Url}", relativeUrl);
                 return default;
             }
         }
@@ -90,7 +90,7 @@ namespace OrchestratorMicroService.Infrastructure.Implementations
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "POST XML error for {Url}", relativeUrl);
+                _logger.LogError(ex.Message, "POST XML error for {Url}", relativeUrl);
                 return default;
             }
         }

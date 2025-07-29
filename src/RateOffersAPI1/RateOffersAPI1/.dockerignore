@@ -1,0 +1,34 @@
+# Carpetas y archivos de IDEs
+.vs/
+.idea/
+.vscode/
+
+# Archivos de configuración y entorno local
+.env
+*.env
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Caché de .NET
+**/bin/
+**/obj/
+
+# Configuraciones usuarios (VS/Visual Studio)
+**/*.user
+**/*.suo
+**/*.csproj.user
+**/*.vbproj.user
+
+# Carpetas de paquetes y logs
+.nuget/
+logs/
+*.log
+*.db
+*.cache
+
+# Docker y otros archivos
+Dockerfile
+docker-compose.yml

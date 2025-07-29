@@ -9,17 +9,17 @@ COPY OrchestratorMicroService.Application/OrchestratorMicroService.Application.c
 COPY OrchestratorMicroService.Domain/OrchestratorMicroService.Domain.csproj ./OrchestratorMicroService.Domain/
 COPY OrchestratorMicroService.Infrastructure/OrchestratorMicroService.Infrastructure.csproj ./OrchestratorMicroService.Infrastructure/
 
-# Restaurar paquetes
+# Restaurar paquetes dentro del contenedor
 RUN dotnet restore ./OrchestratorMicroService.API/OrchestratorMicroService.API.csproj
 
 # Copiar el resto del contenido
 COPY . .
 
 # Compilar
-RUN dotnet build ./OrchestratorMicroService.API/OrchestratorMicroService.API.csproj -c Release --no-restore
+RUN dotnet build ./OrchestratorMicroService.API/OrchestratorMicroService.API.csproj -c Release
 
 # Publicar
-RUN dotnet publish ./OrchestratorMicroService.API/OrchestratorMicroService.API.csproj -c Release -o /app/publish --no-restore
+RUN dotnet publish ./OrchestratorMicroService.API/OrchestratorMicroService.API.csproj -c Release -o /app/publish
 
 # Etapa 2: Imagen final
 FROM mcr.microsoft.com/dotnet/aspnet:8.0

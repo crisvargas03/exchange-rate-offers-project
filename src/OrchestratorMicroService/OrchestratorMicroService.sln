@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrchestratorMicroService.Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrchestratorMicroService.Infrastructure.Tests", "OrchestratorMicroService.Infrastructure.Tests\OrchestratorMicroService.Infrastructure.Tests.csproj", "{F3708F89-D4C2-40A7-859C-86269B1C9B65}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrchestratorMicroService.API.Tests", "OrchestratorMicroService.API.Tests\OrchestratorMicroService.API.Tests.csproj", "{9B403DF9-9479-42E8-B2A7-1104C12FB545}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{F3708F89-D4C2-40A7-859C-86269B1C9B65}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3708F89-D4C2-40A7-859C-86269B1C9B65}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3708F89-D4C2-40A7-859C-86269B1C9B65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B403DF9-9479-42E8-B2A7-1104C12FB545}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B403DF9-9479-42E8-B2A7-1104C12FB545}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B403DF9-9479-42E8-B2A7-1104C12FB545}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B403DF9-9479-42E8-B2A7-1104C12FB545}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

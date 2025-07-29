@@ -9,7 +9,7 @@ services:
             - '5000:8080'
         environment:
             - ASPNETCORE_ENVIRONMENT=Development
-            - OrchestratorSettings__ExternalApiKey=997c05d162-85fe4dab67-t033hv
+            - OrchestratorSettings__ExternalApiKey=YOUR-API-KEY-HERE
             - OrchestratorSettings__MinimumSuccessfulResponses=1
             - OrchestratorSettings__ProviderTimeoutMilliseconds=5000
             - ApiProviders__Api1BaseUrl=http://api1:8080/api

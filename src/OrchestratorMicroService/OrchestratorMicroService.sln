@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36221.1 d17.14
+VisualStudioVersion = 17.14.36221.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrchestratorMicroService.API", "OrchestratorMicroService.API\OrchestratorMicroService.API.csproj", "{4E36CBED-5D87-40F5-9FF1-9F0931F44099}"
 EndProject
@@ -10,6 +10,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrchestratorMicroService.Domain", "OrchestratorMicroService.Domain\OrchestratorMicroService.Domain.csproj", "{5FFB38B5-1115-4B3B-B96E-F3FAC0EBDC39}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrchestratorMicroService.Infrastructure", "OrchestratorMicroService.Infrastructure\OrchestratorMicroService.Infrastructure.csproj", "{DC6E9A85-B46B-463A-84B5-DB642F2CB77E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrchestratorMicroService.Application.Tests", "OrchestratorMicroService.Application.Tests\OrchestratorMicroService.Application.Tests.csproj", "{5C78BD5C-908C-4C88-8B67-C0D1E0737A5E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrchestratorMicroService.Infrastructure.Tests", "OrchestratorMicroService.Infrastructure.Tests\OrchestratorMicroService.Infrastructure.Tests.csproj", "{F3708F89-D4C2-40A7-859C-86269B1C9B65}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{DC6E9A85-B46B-463A-84B5-DB642F2CB77E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC6E9A85-B46B-463A-84B5-DB642F2CB77E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC6E9A85-B46B-463A-84B5-DB642F2CB77E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C78BD5C-908C-4C88-8B67-C0D1E0737A5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C78BD5C-908C-4C88-8B67-C0D1E0737A5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C78BD5C-908C-4C88-8B67-C0D1E0737A5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C78BD5C-908C-4C88-8B67-C0D1E0737A5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3708F89-D4C2-40A7-859C-86269B1C9B65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3708F89-D4C2-40A7-859C-86269B1C9B65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3708F89-D4C2-40A7-859C-86269B1C9B65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3708F89-D4C2-40A7-859C-86269B1C9B65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

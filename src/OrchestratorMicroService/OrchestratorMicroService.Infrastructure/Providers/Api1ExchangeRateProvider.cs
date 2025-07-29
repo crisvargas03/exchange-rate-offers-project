@@ -1,6 +1,5 @@
 ﻿using OrchestratorMicroService.Application.Interfaces;
 using OrchestratorMicroService.Domain.Models;
-using OrchestratorMicroService.Infrastructure.Implementations;
 using OrchestratorMicroService.Infrastructure.Interfaces;
 
 namespace OrchestratorMicroService.Infrastructure.Providers
@@ -17,7 +16,6 @@ namespace OrchestratorMicroService.Infrastructure.Providers
 
         public async Task<CurrencyResult> GetExchangeRateAsync(CurrencyRequest request, CancellationToken cancellationToken)
         {
-
             var urlWithParams = $"/api/rates/exchanges?fromCurrency={request.SourceCurrency}&toCurrency={request.TargetCurrency}";
             var response = await _httpClient.GetAsync<Api1Response>(urlWithParams, cancellationToken);
 
@@ -26,11 +24,12 @@ namespace OrchestratorMicroService.Infrastructure.Providers
                 return CurrencyResult.Fail(ProviderName);
             }
 
-            return CurrencyResult.Success(ProviderName, request.Amount, response.Rate);
+            var calculatedAmount = decimal.Round(request.Amount * response.Rate, 3);
+            return CurrencyResult.Success(ProviderName, calculatedAmount, response.Rate);
 
         }
 
-        private class Api1Response
+        public class Api1Response
         {
             public decimal Rate { get; set; }
         }

@@ -37,19 +37,17 @@ git clone https://github.com/crisvargas03/exchange-rate-offers-project.git
 cd exchange-rate-offers-project/src
 ```
 
-### 2. Construir los contenedores
-
-### 3. Cambiar API Key en el `docker-compose.yml`
+### 2. Cambiar API Key en el `docker-compose.yml`
 
 ```yml
 OrchestratorSettings__ExternalApiKey=YOUR-API-KEY-HERE
 ```
-
+### 3. Construir los contenedores
 ```bash
 docker compose build
 ```
 
-### 3. Levantar los servicios
+### 4. Levantar los servicios
 
 ```bash
 docker compose up
